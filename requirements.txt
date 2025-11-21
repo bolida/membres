@@ -5,21 +5,11 @@ Werkzeug==2.3.7
 # CSV / Excel / PDF
 openpyxl==3.1.2
 xhtml2pdf==0.2.15
-reportlab==3.6.12
-
-# Upload sécurisés
-Werkzeug==2.3.7
+reportlab>=4.0.4,<4.1
 
 # HTML to PDF (xhtml2pdf dépendances)
 Pillow==10.0.0
 
-# Pour Select2 si besoin backend (pas obligatoire)
-# flask-select2
-
-# JSON / utilities
+# JSON / utilitaires
 simplejson==3.19.1
-
-# Tu utilises aussi:
-# - python-dateutil indirectement via Flask/SQLAlchemy
-# - sqlite intégré par défaut
 
