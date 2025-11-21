@@ -8,7 +8,7 @@ xhtml2pdf==0.2.15
 reportlab>=4.0.4,<4.1
 
 # HTML to PDF (xhtml2pdf dépendances)
-Pillow==10.0.0
+Pillow>=10.4
 
 # JSON / utilitaires
 simplejson==3.19.1
