@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Liste des membres filtrés</title>
+  <style>
+    body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 11px; }
+    h1 { font-size: 16px; margin-bottom: 10px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #000; padding: 3px 4px; }
+    th { background: #eee; }
+  </style>
+</head>
+<body>
+  <h1>Liste des membres (export)</h1>
+  {% if selected_session_id %}
+    <p>Session ciblée : {{ selected_session_id }}</p>
+  {% endif %}
+  <table>
+    <thead>
+      <tr>
+        <th>Matricule</th>
+        <th>Nom</th>
+        <th>Famille</th>
+        <th>Civilité</th>
+        <th>Adresse (session)</th>
+        <th>Faritra</th>
+        <th>Téléphone</th>
+        <th>Bénédictions</th>
+        <th>Talents</th>
+        <th>Ministères</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in membres %}
+        {% set insc = None %}
+        {% if selected_session_id %}
+          {% for i in m.inscriptions %}
+            {% if i.session_id == selected_session_id %}
+              {% set insc = i %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% set ministeres_list = [] %}
+        {% if selected_session_id %}
+          {% for smm in m.ministeres %}
+            {% if smm.session_ministere and smm.session_ministere.session_id == selected_session_id %}
+              {% set _ = ministeres_list.append(
+                (smm.session_ministere.ministere.nom if smm.session_ministere.ministere else '') ~
+                ((' - ' ~ smm.role.nom) if smm.role else '')
+              ) %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        <tr>
+          <td>{{ m.matricule }}</td>
+          <td>{{ m.nom }}</td>
+          <td>{{ m.famille.nom if m.famille else '' }}</td>
+          <td>{{ m.civilite or '' }}</td>
+          <td>{{ insc.adresse if insc else '' }}</td>
+          <td>{{ insc.faritra.nom if insc and insc.faritra else '' }}</td>
+          <td>{{ insc.telephone if insc else '' }}</td>
+          <td>{{ m.benedictions_noms }}</td>
+          <td>{{ m.talents_noms }}</td>
+          <td>{{ ministeres_list|join(', ') }}</td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="10">Aucun membre.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
+

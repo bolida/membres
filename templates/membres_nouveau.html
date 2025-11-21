@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Nouveau membre{% endblock %}
+
+{% block content %}
+  <h1 class="mb-3">Nouveau membre</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mt-2">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'warning' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" class="card">
+    <div class="card-body">
+	
+      <div class="mb-3">
+        <label class="form-label">Civilité *</label>
+        <select name="civilite" id="civilite" class="form-select" required>
+          <option value="">-- Toutes --</option>
+          <option value="Mme"> Mme </option>
+       	  <option value="Mr"> Mr </option>
+        </select>
+      </div>
+      
+      <div class="mb-3">
+	  <label class="form-label">Matricule</label>
+	  <input type="text"
+		 id="matricule_preview"
+		 class="form-control"
+		 value="Sera généré automatiquement selon la civilité"
+		 disabled>
+	  <div class="form-text" id="matricule_hint">
+	    Exemple : Mr → L.xxx, Mme → V.xxx
+	  </div>
+	</div>
+
+      
+      <div class="mb-3">
+        <label class="form-label">Famille (obligatoire)</label>
+        <select id="famille_idSelect" name="famille_id" class="form-select">
+          <option value="">-- Sélectionner une famille existante --</option>
+          {% for f in familles %}
+            <option value="{{ f.id }}">{{ f.nom }}</option>
+          {% endfor %}
+        </select>
+        <div class="form-text">Ou bien créer une nouvelle famille :</div>
+        <input type="text" name="nouvelle_famille"
+               class="form-control mt-1"
+               placeholder="Nom de la nouvelle famille">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Nom & prénoms*</label>
+        <input type="text" name="nom" class="form-control" required>
+      </div>
+
+      <div class="col-md-4">
+	    <label class="form-label">Date de naissance *</label>
+	    <input type="date"
+		   name="date_naissance"
+		   class="form-control"
+		   required>
+	</div>
+
+
+      <div class="mb-3">
+        <label class="form-label">Adresse initiale *</label>
+        <input type="text" name="adresse_initiale" class="form-control" required>
+      </div>
+
+      
+
+      <div class="mb-3">
+        <label class="form-label">Type *</label>
+        <select name="type_membre" class="form-select" required>
+          <option value="">-- Choisir --</option>
+          <option value="Père">Père</option>
+          <option value="Mère">Mère</option>
+          <option value="Enfant">Enfant</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Bénédictions</label>
+        <select name="benedictions" id="benedictionsSelect" class="form-select" multiple>
+          {% for b in benedictions %}
+            <option value="{{ b.id }}">{{ b.nom }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Talents</label>
+        <select name="talents" id="talentsSelect" class="form-select" multiple>
+          {% for t in talents %}
+            <option value="{{ t.id }}">{{ t.nom }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" name="carte" id="carteCheck">
+        <label class="form-check-label" for="carteCheck">Carte</label>
+      </div>
+
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="souhait_avoir_carte" id="souhaitCheck">
+        <label class="form-check-label" for="souhaitCheck">Souhaite avoir une carte</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+      <a href="{{ url_for('liste_membres') }}" class="btn btn-secondary">Annuler</a>
+    </div>
+  </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $(function() {
+    $('#benedictionsSelect, #talentsSelect, #famille_idSelect').select2({
+      width: '100%',
+      placeholder: 'Sélectionner...',
+      allowClear: true
+    });
+    
+    function updateMatriculePreview() {
+      const civ = $('#civilite').val().trim();
+
+      if (!civ) {
+        $('#matricule_preview').val("Sera généré automatiquement selon la civilité");
+        $('#matricule_hint').text("Exemple : Mr → L.xxx, Mme → V.xxx");
+        return;
+      }
+
+      $.getJSON("{{ url_for('api_next_matricule') }}", { civilite: civ }, function (data) {
+        if (data && data.matricule) {
+          $('#matricule_preview').val(data.matricule);
+          $('#matricule_hint').text("Prochain matricule suggéré pour cette civilité.");
+        }
+      });
+    }
+      
+    $('#civilite').on('change keyup', updateMatriculePreview);
+
+    // Initialisation au chargement
+    updateMatriculePreview();
+  });
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <style>
+    .select2-container .select2-selection--multiple {
+      min-height: 38px;
+    }
+  </style>
+{% endblock %}
+

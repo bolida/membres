@@ -1,0 +1,519 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des membres{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">Liste des membres - Session {{ selected_session_id }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="mt-2">
+  {% for category, message in messages %}
+  <div class="alert alert-{{ 'warning' if category == 'error' else category }} alert-dismissible fade show"
+    role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{% set qs = request.query_string.decode('utf-8') %}
+<div class="mb-3 d-flex gap-2 flex-wrap">
+  <a href="{{ url_for('membres_export_xlsx') }}{% if qs %}?{{ qs }}{% endif %}" class="btn btn-outline-success btn-sm">
+    Export XLSX
+  </a>
+  <a href="{{ url_for('membres_export_pdf') }}{% if qs %}?{{ qs }}{% endif %}" class="btn btn-outline-danger btn-sm">
+    Export PDF
+  </a>
+</div>
+
+
+<form method="get" class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Filtres</h5>
+    <div class="row g-3">
+
+      <div class="col-md-4">
+        <label class="form-label">Session (non clôturées)</label>
+        <select name="session_id" class="form-select">
+	  <option value="">-- Par défaut : session active --</option>
+
+	  <option value="__NOSESSION__" {% if no_session_filter %}selected{% endif %}>
+	    Sans session
+	  </option>
+
+	  {% for s in sessions %}
+	  <option value="{{ s.id }}"
+		  {% if not no_session_filter and selected_session_id==s.id %}selected{% endif %}>
+	    Session {{ s.id }} : {{ s.date_debut }} → {{ s.date_fin }}{% if s.active %} (active){% endif %}
+	  </option>
+	  {% endfor %}
+	</select>
+
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Nom</label>
+        <input type="text" name="nom" value="{{ nom }}" class="form-control">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Civilité</label>
+        <select name="civilite" class="form-select">
+          <option value="">-- Toutes --</option>
+          <option value="Mme" {% if civilite=='Mme' %}selected{% endif %}> Mme </option>
+       	  <option value="Mr" {% if civilite=='Mr' %}selected{% endif %}> Mr </option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Famille</label>
+        <select name="famille_id" class="form-select">
+          <option value="">-- Toutes --</option>
+          {% for f in familles %}
+          <option value="{{ f.id }}" {% if famille_id==f.id %}selected{% endif %}>
+            {{ f.nom }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Bénédiction</label>
+        <select name="benediction_id" class="form-select">
+          <option value="">-- Toutes --</option>
+          {% for b in toutes_benedictions %}
+          <option value="{{ b.id }}" {% if benediction_id==b.id %}selected{% endif %}>
+            {{ b.nom }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Talent</label>
+        <select name="talent_id" class="form-select">
+          <option value="">-- Tous --</option>
+          {% for t in tous_talents %}
+          <option value="{{ t.id }}" {% if talent_id==t.id %}selected{% endif %}>
+            {{ t.nom }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Ministère</label>
+        <select name="ministere_id" class="form-select">
+          <option value="">-- Tous --</option>
+          {% for m in tous_ministeres %}
+          <option value="{{ m.id }}" {% if ministere_id==m.id %}selected{% endif %}>
+            {{ m.nom }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Responsable</label>
+        <select name="responsable_id" class="form-select">
+          <option value="">-- Tous --</option>
+          <option value="__NONE__" {% if responsable_id=='__NONE__' %}selected{% endif %}>
+            Sans responsable
+          </option>
+          {% for r in responsables %}
+          <option value="{{ r.matricule }}" {% if responsable_id==r.matricule %}selected{% endif %}>
+            {{ r.matricule }} - {{ r.nom }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+
+
+      <div class="col-md-4">
+        <label class="form-label">Adresse</label>
+        <input type="text" name="adresse" value="{{ adresse }}" class="form-control">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Faritra</label>
+        <select name="faritra_id" class="form-select">
+          <option value="">-- Tous --</option>
+          {% for f in tous_faritras %}
+          <option value="{{ f.id }}" {% if faritra_id==f.id %}selected{% endif %}>
+            {{ f.nom }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Téléphone</label>
+        <input type="text" name="telephone" value="{{ telephone }}" class="form-control">
+      </div>
+      
+      <div class="col-md-4">
+	  <label class="form-label">Zoky olona (65 ans et +)</label>
+	  <select name="zoky" class="form-select">
+	    <option value="">-- Tous --</option>
+	    <option value="1" {% if zoky==1 %}selected{% endif %}>Oui</option>
+	    <option value="0" {% if zoky==0 %}selected{% endif %}>Non</option>
+	  </select>
+	</div>
+
+
+      <div class="col-12 d-flex justify-content-end mt-2">
+        <button type="submit" class="btn btn-primary me-2">Appliquer les filtres</button>
+        <a href="{{ url_for('liste_membres') }}" class="btn btn-outline-secondary">Réinitialiser</a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="card">
+  <div class="card-header">
+    <b>Résultats:</b> 
+    {% if no_session_filter %}
+        {{ total_membres }} membre(s) sans session.
+      {% elif selected_session_id %}
+        {{ total_membres }} membre(s) inscrits pour la session {{ selected_session_id }}.
+      {% else %}
+        {{ total_membres }} membre(s) trouvés.
+      {% endif %}
+  </div>
+
+  <form method="post" id="bulk_form">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" id="select_all_membres">
+            </th>
+            <th>Photo</th>
+            <th>Matricule</th>
+            <th>Civilité</th>
+            <th>Nom</th>
+            <th>Age</th>
+            <th>Famille</th>
+            <th>Responsable</th>
+
+            <th>Faritra</th>
+            <th>Téléphone</th>
+            <th>Bénédictions</th>
+            <th>Ministères</th>
+            <th>Talents</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in membres %}
+          {% set insc = (m.inscriptions
+          |selectattr("session_id", "equalto", selected_session_id)
+          |list
+          |first) %}
+          <tr>
+            <td>
+              <input type="checkbox" name="selected_membres" value="{{ m.matricule }}" class="chk-membre">
+            </td>
+            <td>
+
+              <div class="avatar-wrapper">
+                {% if m.photo %}
+                <img src="{{ url_for('static', filename='uploads/membres/' ~ m.photo) }}" alt="Photo de {{ m.nom }}"
+                  data-bs-toggle="modal" data-bs-target="#photoModal_{{ m.matricule }}">
+                {% else %}
+                <span class="avatar-initials">
+                  {{ m.nom[:2]|upper }}
+                </span>
+                {% endif %}
+              </div>
+            </td>
+            <td>{{ m.matricule }}</td>
+            <td>{{ m.civilite or '' }}</td>
+            <td>{{ m.nom }}</td>
+            <td>
+		  {% if m.age is not none %}
+		    {% if m.age >= 65 %}
+		      <span class="badge bg-danger fw-bold">
+			{{ m.age }} ans
+		      </span>
+		    {% else %}
+		      <span class="badge bg-secondary">
+			{{ m.age }} ans
+		      </span>
+		    {% endif %}
+		  {% else %}
+		    <span class="text-muted">–</span>
+		  {% endif %}
+		</td>
+            <td>
+              {% if m.famille %}
+              <a href="{{ url_for('famille_fiche', famille_id=m.famille.id) }}">
+                {{ m.famille.nom }}
+              </a>
+              {% endif %}
+            </td>
+            <td>
+              {% if insc and insc.responsable %}
+              {{ insc.responsable.matricule }} - {{ insc.responsable.nom }}
+              {% endif %}
+            </td>
+
+
+            <td>
+              <span class="badge bg-secondary mb-1">{{ insc.faritra.nom if insc and insc.faritra else '' }}</span>
+            </td>
+            <td>{{ insc.telephone if insc else '' }}</td>
+            <td>{{ m.benedictions_noms }}</td>
+            <td>
+              {% for smm in m.ministeres %}
+              {% if smm.session_ministere and smm.session_ministere.session_id == selected_session_id %}
+              <span class="badge bg-secondary mb-1">
+                {{ smm.session_ministere.ministere.nom }}
+              </span><br>
+              {% endif %}
+              {% endfor %}
+            </td>
+            <td>{{ m.talents_noms }}</td>
+            <td>
+              <a href="{{ url_for('membre_modifier', matricule=m.matricule) }}" class="btn btn-sm btn-outline-primary">
+                Modifier
+              </a>
+              <a href="{{ url_for('membre_fiche', matricule=m.matricule) }}" class="btn btn-sm btn-outline-secondary">
+                Fiche
+              </a>
+            </td>
+
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="14" class="text-center">Aucun membre ne correspond aux filtres.</td>
+          </tr>
+
+
+
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% if pagination and pagination.pages > 1 %}
+      <nav aria-label="Pagination" class="mt-3">
+        <ul class="pagination">
+
+          {# Page précédente #}
+          {% if pagination.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for_other_page(pagination.prev_num) }}">«</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">«</span>
+          </li>
+          {% endif %}
+
+          {# Numéros de page #}
+          {% for p in range(1, pagination.pages + 1) %}
+          <li class="page-item {% if p == pagination.page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for_other_page(p) }}">{{ p }}</a>
+          </li>
+          {% endfor %}
+
+          {# Page suivante #}
+          {% if pagination.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for_other_page(pagination.next_num) }}">»</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">»</span>
+          </li>
+          {% endif %}
+
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+
+    <!-- Actions groupées -->
+    <div class="card mb-3">
+      <div class="card-body">
+
+        <h5 class="mb-3">Actions groupées</h5>
+
+        <div class="row g-3">
+
+          <!-- Sélecteur d'action -->
+          <div class="col-md-4">
+            <label class="form-label">Action à effectuer</label>
+            <select name="bulk_action" id="bulk_action_membres" class="form-select" required>
+              <option value="">-- Choisir une action --</option>
+              <option value="creer_famille">Associer les membres sélectionnés à une famille</option>
+              <option value="set_responsable">Affecter un responsable (FDL)</option>
+              <option value="supprimer_non_inscrits">Supprimer les membres non inscrits à aucune session</option>
+            </select>
+          </div>
+
+          <!-- Choix d'une famille existante -->
+          <div class="col-md-4 bulk-field bulk-famille d-none">
+            <label class="form-label">Famille existante</label>
+            <select name="bulk_famille_id" class="form-select select2">
+              <option value="">-- Sélectionner une famille --</option>
+              {% for f in familles %}
+              <option value="{{ f.id }}">{{ f.nom }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Création nouvelle famille -->
+          <div class="col-md-4 bulk-field bulk-famille d-none">
+            <label class="form-label">Nouvelle famille</label>
+            <input type="text" name="bulk_nouvelle_famille" class="form-control"
+              placeholder="Nom de la nouvelle famille">
+          </div>
+
+          <!-- Sélecteur responsable -->
+          <div class="col-md-4 bulk-field bulk-responsable d-none">
+            <label class="form-label">Responsable (FDL)</label>
+            <select name="bulk_responsable_id" class="form-select select2">
+              <option value="">-- Choisir un responsable FDL --</option>
+              {% for r in responsables %}
+              <option value="{{ r.matricule }}">{{ r.matricule }} - {{ r.nom }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+        </div>
+
+        <div class="mt-3">
+          <button type="submit" class="btn btn-primary">
+            Appliquer l'action
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+
+<a href="{{ url_for('index') }}" class="btn btn-link mt-3">Retour à l'accueil</a>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  $(function () {
+    // --- INIT SELECT2 ---
+
+    if ($.fn.select2) {
+      // Select2 sur les familles
+      $('select[name="bulk_famille_id"]').select2({
+        width: "100%",
+        allowClear: true,
+        placeholder: "-- Sélectionner une famille --"
+      });
+
+      // Select2 sur les responsables FDL
+      $('select[name="bulk_responsable_id"]').select2({
+        width: "100%",
+        allowClear: true,
+        placeholder: "-- Choisir un responsable FDL --"
+      });
+
+      // (optionnel) Select2 sur le select d'action groupée
+      /*$('#bulk_action_membres').select2({
+        width: "100%",
+        allowClear: true,
+        placeholder: "-- Choisir une action --3"
+      });*/
+    }
+
+    // --- LOGIQUE D'AFFICHAGE DES BLOCS ---
+
+    const $bulkAction = $('#bulk_action_membres');
+    const selectAll = document.getElementById('select_all_membres');
+    const checks = document.querySelectorAll('.chk-membre');
+
+    const familleFields = document.querySelectorAll('.bulk-famille');
+    const responsableFields = document.querySelectorAll('.bulk-responsable');
+
+    function hideAll() {
+      familleFields.forEach(el => el.classList.add('d-none'));
+      responsableFields.forEach(el => el.classList.add('d-none'));
+    }
+
+    // Au chargement : tout cacher
+    hideAll();
+
+    // Sur changement d'action (via jQuery, compatible Select2)
+    $bulkAction.on('change', function () {
+      const val = $(this).val();
+      hideAll();
+
+      if (val === 'creer_famille') {
+        familleFields.forEach(el => el.classList.remove('d-none'));
+      }
+      if (val === 'set_responsable') {
+        responsableFields.forEach(el => el.classList.remove('d-none'));
+      }
+    });
+
+    // Checkbox "Tout sélectionner" si elle existe
+    if (selectAll) {
+      selectAll.addEventListener('change', function () {
+        checks.forEach(c => c.checked = selectAll.checked);
+      });
+    }
+  });
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <style>
+    .select2-container .select2-selection--single {
+      height: 38px;
+      padding: 4px 8px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      line-height: 28px;
+    }
+  </style>
+<style>
+  .avatar-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6c757d;
+  }
+
+  .avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .avatar-wrapper:hover img {
+    transform: scale(1.15);
+  }
+
+  .avatar-initials {
+    text-transform: uppercase;
+  }
+</style>
+
+{% endblock %}

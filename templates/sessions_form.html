@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Nouvelle session{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-3">Nouvelle session</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="mt-2">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'warning' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form method="post" class="card">
+  <div class="card-body">
+
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Date de début *</label>
+        <input type="date" name="date_debut" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Date de fin *</label>
+        <input type="date" name="date_fin" class="form-control" required>
+      </div>
+    </div>
+
+    <hr>
+
+    <h5 class="mb-3">Copie depuis une session existante</h5>
+
+    <div class="mb-3">
+	  <label class="form-label">Session source (optionnel)</label>
+	  <select name="source_session_id" class="form-select">
+	    <option value="">-- Ne rien copier --</option>
+	    {% for s in sessions_existantes %}
+	      {% set st = stats_sessions.get(s.id) %}
+	      <option value="{{ s.id }}">
+		Session {{ s.id }} - du {{ s.date_debut }} au {{ s.date_fin }}
+		{% if s.active and not s.est_cloture %} (Active){% endif %}
+		{% if s.est_cloture %} (Clôturée){% endif %}
+		{% if st %}
+		  – {{ st.inscriptions }} inscr., {{ st.ministeres }} minist., {{ st.membres_ministeres }} membres ministères
+		{% endif %}
+	      </option>
+	    {% endfor %}
+	  </select>
+	  <div class="form-text">
+	    Si vous choisissez une session source, vous pouvez copier les inscriptions, les ministères et leurs membres.
+	  </div>
+
+	  <div id="sessionStats" class="small mt-2 text-muted"></div>
+	</div>
+
+
+
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="copierInscr" name="copier_inscriptions" checked>
+        <label class="form-check-label" for="copierInscr">
+          Copier les membres inscrits (inscriptions) depuis la session sélectionnée
+        </label>
+      </div>
+      <div class="form-check mt-1">
+        <input class="form-check-input" type="checkbox" id="copierMinist" name="copier_ministeres" checked>
+        <label class="form-check-label" for="copierMinist">
+          Copier les ministères de la session et les membres + rôles
+        </label>
+      </div>
+      <div class="form-text">
+        Si aucune session source n'est sélectionnée, ces options sont ignorées.
+      </div>
+    </div>
+
+    <div class="mt-3 d-flex justify-content-start gap-2">
+      <button type="submit" class="btn btn-primary">Créer et activer la session</button>
+      <a href="{{ url_for('sessions_liste') }}" class="btn btn-secondary">Annuler</a>
+    </div>
+
+  </div>
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const statsSessions = {{ stats_sessions|tojson }};
+    const selectSession = document.querySelector('select[name="source_session_id"]');
+    const statsDiv = document.getElementById('sessionStats');
+    const copierInscr = document.getElementById('copierInscr');
+    const copierMinist = document.getElementById('copierMinist');
+
+    function refreshStats() {
+      const val = selectSession.value;
+
+      if (!val) {
+        statsDiv.textContent = "Aucune session source sélectionnée : aucune copie ne sera effectuée.";
+        copierInscr.checked = false;
+        copierMinist.checked = false;
+        copierInscr.disabled = true;
+        copierMinist.disabled = true;
+        return;
+      }
+
+      const st = statsSessions[val];
+
+      if (st) {
+        statsDiv.textContent =
+          "Cette session contient " +
+          st.inscriptions + " inscription(s), " +
+          st.ministeres + " ministère(s), " +
+          st.membres_ministeres + " membre(s) de ministères.";
+      } else {
+        statsDiv.textContent = "Statistiques non disponibles pour cette session.";
+      }
+
+      copierInscr.disabled = false;
+      copierMinist.disabled = false;
+
+      // Si tu veux qu'elles soient cochées automatiquement quand on choisit une session :
+      if (!copierInscr.checked && !copierMinist.checked) {
+        copierInscr.checked = true;
+        copierMinist.checked = true;
+      }
+    }
+
+    // Initialisation au chargement
+    refreshStats();
+    selectSession.addEventListener('change', refreshStats);
+  });
+</script>
+
+{% endblock %}
+

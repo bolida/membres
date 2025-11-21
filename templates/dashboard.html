@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+  <h1 class="mb-3">Dashboard</h1>
+
+  <!-- Ligne 1 : stats principales -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted">Membres total</h6>
+          <h2 class="mb-0">{{ total_membres }}</h2>
+          <p class="mb-0 text-success small">{{ membres_actifs }} actif(s)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted">Familles</h6>
+          <h2 class="mb-0">{{ total_familles }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted">Sessions</h6>
+          <h2 class="mb-0">{{ total_sessions }}</h2>
+          <p class="mb-0 text-primary small">{{ sessions_actives }} active(s)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted">Ministères</h6>
+          <h2 class="mb-0">{{ total_ministeres }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ligne 2 : dernière session + raccourcis -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-2">Dernière session</h5>
+          {% if last_session %}
+            <p class="mb-1">
+              <strong>ID :</strong> {{ last_session.id }}<br>
+              <strong>Période :</strong>
+              du {{ last_session.date_debut }} au {{ last_session.date_fin }}
+            </p>
+            <p class="mb-1">
+              <strong>Inscriptions :</strong> {{ inscriptions_last_session }}
+            </p>
+            <p class="mb-0">
+              <strong>Statut :</strong>
+              {% if last_session.active and not last_session.est_cloture %}
+                <span class="badge bg-success">Active</span>
+              {% elif last_session.est_cloture %}
+                <span class="badge bg-danger">Clôturée</span>
+              {% else %}
+                <span class="badge bg-secondary">Inactive</span>
+              {% endif %}
+            </p>
+          {% else %}
+            <p class="text-muted mb-0">Aucune session enregistrée.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Raccourcis</h5>
+          <div class="d-flex flex-column gap-2">
+            <a href="{{ url_for('liste_membres') }}" class="btn btn-outline-primary btn-sm text-start">
+              👥 Liste des membres
+            </a>
+            <a href="{{ url_for('sessions_liste') }}" class="btn btn-outline-primary btn-sm text-start">
+              📅 Sessions
+            </a>
+            <a href="{{ url_for('liste_membres') }}?civilite=Monsieur" class="btn btn-outline-secondary btn-sm text-start">
+              🔎 Filtre : Monsieur
+            </a>
+            <a href="{{ url_for('liste_membres') }}?civilite=Madame" class="btn btn-outline-secondary btn-sm text-start">
+              🔎 Filtre : Madame
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+

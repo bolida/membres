@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Fiche famille {{ famille.nom }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .card {
+        border: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container my-4">
+
+  <div class="no-print mb-3 d-flex justify-content-between">
+    <a href="{{ url_for('liste_membres') }}" class="btn btn-link">&larr; Retour à la liste</a>
+    <button class="btn btn-primary" onclick="window.print()">🖨 Imprimer / PDF</button>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+
+      <h2 class="mb-3">Fiche famille : {{ famille.nom }}</h2>
+
+      {% if membres %}
+        {% for m in membres %}
+          <div class="mb-4 pb-3 border-bottom">
+            <h4 class="mb-1">
+              {{ m.matricule }} – {{ m.nom }}
+              <small class="text-muted">
+                ({{ m.civilite or 'N/A' }} – {{ m.type_membre or 'Type ?' }})
+              </small>
+            </h4>
+            <p class="mb-1"><strong>Adresse initiale :</strong> {{ m.adresse_initiale or '' }}</p>
+            <p class="mb-1">
+              <strong>Statut :</strong>
+              {% if m.est_mort %}
+                Décédé{% if m.date_mort %} ({{ m.date_mort }}){% endif %}
+              {% elif m.date_depart %}
+                Parti ({{ m.date_depart }})
+              {% else %}
+                Actif
+              {% endif %}
+            </p>
+            <p class="mb-1">
+              <strong>Bénédictions :</strong> {{ m.benedictions_noms or 'Aucune' }}
+            </p>
+            <p class="mb-2">
+              <strong>Talents :</strong> {{ m.talents_noms or 'Aucun' }}
+            </p>
+
+            <!-- Historique des sessions + ministères -->
+            {% if m.inscriptions %}
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width: 10%;">Session</th>
+                      <th style="width: 20%;">Période</th>
+                      <th style="width: 25%;">Infos inscription</th>
+                      <th style="width: 45%;">Ministères & rôles</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for ins in m.inscriptions|sort(attribute='id', reverse=True) %}
+                      {% set s = ins.session %}
+                      <tr>
+                        <td>
+                          {% if s %}
+                            #{{ s.id }}
+                          {% else %}
+                            -
+                          {% endif %}
+                        </td>
+                        <td>
+                          {% if s %}
+                            Du {{ s.date_debut or '' }} au {{ s.date_fin or '' }}<br>
+                            {% if s.active %}
+                              <span class="badge bg-success">Active</span>
+                            {% endif %}
+                            {% if s.est_cloture %}
+                              <span class="badge bg-danger">Clôturée</span>
+                            {% endif %}
+                          {% endif %}
+                        </td>
+                        <td>
+                          <div><strong>Adresse :</strong> {{ ins.adresse or '' }}</div>
+                          <div>
+                            <strong>Faritra :</strong>
+                            {{ ins.faritra.nom if ins.faritra else '' }}
+                          </div>
+                          <div><strong>Tél :</strong> {{ ins.telephone or '' }}</div>
+                          {% if ins.responsable %}
+                            <div><strong>Responsable :</strong> {{ ins.responsable.nom }}</div>
+                          {% endif %}
+                        </td>
+                        <td>
+                          {% set has_min = false %}
+                          {% for smm in m.ministeres %}
+                            {% if smm.session_ministere and s and smm.session_ministere.session_id == s.id %}
+                              {% set has_min = true %}
+                              <div class="mb-1">
+                                <strong>{{ smm.session_ministere.ministere.nom }}</strong>
+                                {% if smm.role %}
+                                  – <em>{{ smm.role.nom }}</em>
+                                {% endif %}
+                              </div>
+                            {% endif %}
+                          {% endfor %}
+                          {% if not has_min %}
+                            <span class="text-muted">Aucun ministère enregistré pour cette session.</span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="text-muted mb-0">
+                Aucune session d'inscription enregistrée pour ce membre.
+              </p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">Aucun membre pour cette famille.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
+

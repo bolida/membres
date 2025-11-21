@@ -1,0 +1,62 @@
+matricule;nom;adresse;téléphone;faritra_id;benediction;ministere;date_naissance;type;famille;responsable_id
+L.116;RAELISON Merly;2 B 268 Bis Mahalavaolona Andoharanofotsy;344504606;5;Baptême, Confirmation;;1981-05-06;Père;L.116;L.347
+V.161;RAELISON Hantaniaina;2 B 268 Bis Mahalavaolona Andoharanofotsy;;5;Baptême, Confirmation;;1981-05-05;;L.116;L.347
+L.347;RANDRIAMALALA Vonjy;Ambohimahavelona Ambatomirahavavy;;5;Baptême, Confirmation;FDL;1981-05-07;Père;L.347;L.347
+V.117;NAMPINJANAHARY Henintsoa Nadia;Andoharanofotsy;349045434;5;Baptême, Confirmation;;1981-05-08;Père;V.117;L.235
+V.678;RASOLOFOSOA Voahangy;BAO 1 Ampitatafika;337868795;5;Baptême, Confirmation;;1981-05-09;Père;V.678;L.235
+L.235;RAKOTONDRAMANO Heliarivonjy Solonirinantenaina;CB 11 ARI Morarano Andoharanofotsy M.;346096606;5;Baptême, Confirmation;FDL;1981-05-10;Père;L.235;L.235
+V.273;RAHERINIRINA Haingotina;CB 11 ARI Morarano Andoharanofotsy Mandrimena;344401805;5;Baptême, Confirmation;FDL;1981-05-11;;L.235;L.235
+V.465;RANAIVOSON Voahangy;Cité Ampefiloha lgt  121;342619651;5;Baptême, Confirmation;;1981-05-12;Père;V.465;L.235
+V.617;RASOANJANAHARY Faneva;FA 211 Ter Ambohimanatrika;337168287;5;Baptême, Confirmation;;1981-05-13;Père;V.617;V.273
+V.618;RASOANJANAHARY Marianne;FA 211 Ter Ambohimanatrika;337168287;5;Baptême, Confirmation;;1981-05-14;;V.617;V.273
+V.620;RASOANJANAHARY Sylvia;FA 211 Ter Ambohimanatrika;337168287;5;Baptême, Confirmation;;1981-05-15;;V.617;V.273
+L.470;RASOLOFONIRINA Fanomezanjanahary Victor;I 161 Ter Manarintsoa Ambohijanaka;330236095;5;Baptême, Confirmation;FDL;1981-05-18;Père;L.080;L.470
+L.080;FANOMEZANJANAHARY Francky;I 161 Ter Manarintsoa Ambohijanaka;349186989;5;Baptême, Confirmation;;1981-05-16;;L.080;V.273
+L.081;FANOMEZANJANAHARY Radoniaina;I 161 Ter Manarintsoa Ambohijanaka;340499991;5;Baptême, Confirmation;;1981-05-17;;L.080;V.273
+V.797;RAZAFIMALALA Odile;I 161 Ter Manarintsoa Ambohijanaka;341026414;5;Baptême, Confirmation;FDL;1981-05-19;;L.080;L.470
+V.502;RANDRIANANJA Malalatiana;IA 15 Ter B Tanjombato;340536630;5;Baptême, Confirmation;FDL;1981-05-20;Père;V.502;V.797
+L.455;RASENDRAHASINA Solofo Mendrika;IAC 07 E Andramahavola Itaosy;348145743;5;Baptême, Confirmation;FDL;1981-05-22;Père;L.455;V.797
+V.163;RAELISON Ialitiana Niaina;IAC 07 E Andramahavola Itaosy;320745639;5;Baptême, Confirmation;FDL;1981-05-21;;L.455;V.797
+V.904;RAZANAMASY Arlette;IC 219 Ter A Ankaraobato;348722731;5;Baptême, Confirmation;;1981-05-23;Père;V.904;V.797
+L.277;RAKOTOZAFY Haja;ID 114 Bis Isoraka;346256755;5;Baptême, Confirmation;;1981-05-25;Père;L.277;V.502
+L.029;ANDRIAMIHAJA Rijah;ID 114 Bis Isoraka;342812430;5;Baptême, Confirmation;;1981-05-24;;L.277;V.502
+L.121;RAFALINJATO Jean Désiré;IG 128 A Ambalavao Isotry;347411704;5;Baptême, Confirmation;;1981-05-26;Père;L.121;V.502
+V.556;RASAMOELINA Perle Denise;IG 128 A Ambalavao Isotry;340848525;5;Baptême, Confirmation;;1981-05-27;;L.121;L.254
+L.254;RAKOTONIRAINY Jean Désiré;IG 33 A Ambalavao Isotry;344620648;5;Baptême, Confirmation;FDL;1981-05-29;Père;L.254;L.254
+V.182;RAFARASOA;IG 33 A Ambalavao Isotry;340356670;5;Baptême, Confirmation;;1981-05-28;;L.254;L.254
+V.535;RANJA Vahanionja;II B 308 Andoharanofotsy;340497544;5;Baptême, Confirmation;;1981-05-30;Père;V.535;L.254
+V.731;RAVELOARIJAONA Norotiana;II B 308 Andoharanofotsy;340497566;5;Baptême, Confirmation;FDL;1981-05-31;;V.535;L.254
+V.561;RASELISON Harivola Lucienne;II B 316 Ter Mahalavolona Andoharanofotsy;340690235;5;Baptême, Confirmation;FDL;1981-06-01;Père;V.561;L.254
+V.358;RAKOTONIAINA Sahoby;II C 2 Bis Ifarihy;320418135;5;Baptême, Confirmation;;1981-06-02;Père;V.358;L.254
+V.019;ANDRIAMAROZO;II H 26 FCAF;327256187;5;Baptême, Confirmation;;1981-06-03;Père;V.019;V.731
+L.341;RANARIVELO ANDRIANIAINA Herijaona;III E 13 Bis Mahamasina Sud;340358303;5;Baptême, Confirmation;;1981-06-04;Père;L.341;V.731
+L.156;RAJAOMARIA Andry Tiana L;III G 3 Ouest Ambohijanahary;340215835;5;Baptême, Confirmation;FDL;1981-06-06;Père;L.156;V.731
+V.183;RAFETRAHARISON Lynah;III G 3 Ouest Ambohijanahary;341386613;5;Baptême, Confirmation;FDL;1981-06-05;;L.156;V.731
+L.157;RAJAOMARIA Hery Fanantenana;III U 137 D Anosizato Atsinana I;340215835;5;Baptême, Confirmation;;1981-06-07;Père;L.157;V.731
+V.808;RAZAFINDRAFITO Bakovololoniaina;III U 42 Ankadimabahoaka;324044392;5;Baptême, Confirmation;;1981-06-08;Père;V.808;V.183
+L.408;RANDRIANARIVELO Nomenjanahary Marcel;III X 152 FCA Anosibe;326287142;5;Baptême, Confirmation;;1981-06-10;Père;V.413;V.183
+V.413;RAMANANTENASOA Hélène;III X 152 FCA Anosibe;330929672;5;Baptême, Confirmation;;1981-06-09;;V.413;V.183
+L.430;RANDRIANTSOA Lafatra Niaina;Itaosy Ambonisoa;335757937;5;Baptême, Confirmation;;1981-06-11;Père;L.430;V.183
+L.409;RANDRIANARIVO Jean Claude;IVB 256 Andoharanofotsy;347352784;5;Baptême, Confirmation;;1981-06-13;Père;L.409;V.183
+V.206;RAHARIMALALA Niaina Victorine;IVB 256 Andoharanofotsy;330731962;5;Baptême, Confirmation;;1981-06-12;;L.409;V.183
+V.908;RAZANAMPANAHY Hanitriniaina;IVB 256 Andoharanofotsy;337194940;5;Baptême, Confirmation;;1981-06-14;;L.409;V.183
+V.973;RAMANANTSIALONINA Sarindrantsoa Princia;Mahamasina;;5;Baptême, Confirmation;;1981-06-15;Père;V.973;V.183
+V.975;RANIVOHARILALA Annick;Mahamasina IV;340141250;5;Baptême, Confirmation;;1981-06-16;Père;V.975;V.183
+L.325;RAMILISON Solonomenjanahary;Manarintsoa;349118839;5;Baptême, Confirmation;;1981-06-17;Père;L.325;L.156
+L.545;RAZONARISON Rivomampianina;MB 446 Andoharanofotsy;;5;Baptême, Confirmation;FDL;1981-06-20;Père;L.545;L.156
+V.701;RATSARAIBE Tiana;MB 446 Andoharanofotsy;320237751;5;Baptême, Confirmation;;1981-06-18;;L.545;L.156
+V.926;RAZONARISON Ravo Maeva;MB 446 Andoharanofotsy;320237751;5;Baptême, Confirmation;;1981-06-19;;L.545;L.156
+V.971;FIDELIS Tianarisoa Ameline;N 153 Manarintsoa;;5;Baptême, Confirmation;FDL;1981-06-21;Père;V.971;L.156
+V.170;RAFALIMANANA Josée Nambinina;S IV 42 C Analapanga Soavina;341361773;5;Baptême, Confirmation;;1981-06-22;Père;V.170;L.545
+L.171;RAJARIZAKA Ediniaina;T85 ter Ankadindratombo;344594478;5;Baptême, Confirmation;;1981-06-23;Père;L.171;L.545
+V.602;RASOANIAINA Haingotiana ;TJ 42 B Tanjonandriana;385997605;5;Baptême, Confirmation;;1981-06-24;Père;V.602;L.545
+L.141;RAHARINOSY Natsiry;VF 09 10 Andoharanofotsy ;325301480;5;Baptême, Confirmation;;1981-06-25;Père;L.141;L.545
+V.352;RAKOTONDRAZAFY Antsa;VF 09 10 Andoharanofotsy ;345291678;5;Baptême, Confirmation;;1981-06-26;;L.141;V.971
+L.319;RAMIANDRISOA Fetra;VII 36 Amboanjobe;342194234;5;Baptême, Confirmation;FDL;1981-06-28;Père;L.319;V.971
+V.297;RAJAONARIVELO Bakoly;VII 36 Amboanjobe;342909200;5;Baptême, Confirmation;FDL;1981-06-27;;L.319;V.971
+V.494;RANDRIAMITANDRINA Mboahangy;VII 36 Amboanjobe;340892929;5;Baptême, Confirmation;FDL;1981-06-29;;L.319;L.319
+L.501;RAVELONIRINA Andoniaina;VK 64 Ambatolova;382320678;5;Baptême, Confirmation;;1981-06-30;Père;L.501;L.319
+V.004;ANDONIAINA Carine;VD 82 Bis Ambanidia;;5;Baptême, Confirmation;;1981-07-01;Père;V.004;L.319
+L.342;RANDRIAFANOHERISOA Tolotra Sedera;VN 19 B Ankazolava;340199079;5;Baptême, Confirmation;FDL;1981-07-02;Père;L.342;L.342
+V.470;RANDRIAFENONIRAINY Felana;VN 19 B Ankazolava;343741397;5;Baptême, Confirmation;;1981-07-03;;L.342;L.342
+V.523;RANDRIATERINIRAINY Mendrika F.;VN 19 B Ankazolava;342200035;5;Baptême, Confirmation;;1981-07-04;;L.342;L.342

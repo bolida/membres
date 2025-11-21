@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Membres du ministère{% endblock %}
+
+{% block content %}
+
+  <h1 class="mb-2">
+    Membres du ministère {{ sm.ministere.nom }}
+  </h1>
+  <p class="text-muted mb-3">
+    Session {{ session.id }} ({{ session.date_debut }} - {{ session.date_fin }})
+  </p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mt-2">
+        {% for cat, msg in messages %}
+          <div class="alert alert-{{ 'danger' if cat == 'error' else cat }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- GESTION DES MEMBRES DÉJÀ AFFECTÉS : modifier rôle + supprimer -->
+  <h2 class="h5 mt-4">Membres affectés</h2>
+  
+  {% if role_stats %}
+    <div class="mb-2 small text-muted">
+      {% for rs in role_stats %}
+        <div>
+          Rôle <strong>{{ rs.role_nom }}</strong> :
+          {{ rs.count }}
+          /
+          {% if rs.max is not none %}
+            {{ rs.max }}
+          {% else %}
+            ∞
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post" class="card mb-4">
+    <input type="hidden" name="action" value="update_roles">
+    <div class="card-body">
+
+      <div class="table-responsive mb-3">
+        <table class="table table-striped table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Matricule</th>
+              <th>Nom</th>
+              <th>Rôle actuel</th>
+              <th>Modifier le rôle</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in affectations %}
+              <tr>
+                <td>{{ a.membre.matricule }}</td>
+                <td>{{ a.membre.nom }}</td>
+                <td>
+                  {% if a.role %}
+                    <span class="badge bg-info text-dark">
+                      {{ a.role.nom }}
+                    </span>
+                  {% else %}
+                    <span class="badge bg-secondary">
+                      Aucun
+                    </span>
+                  {% endif %}
+                </td>
+                <td style="width: 230px;">
+                  <select name="role_id_{{ a.id }}" class="form-select form-select-sm">
+                    <option value="">(par défaut : "membre")</option>
+                    {% for r in roles_disponibles %}
+                      <option value="{{ r.id }}"
+                              {% if a.role_id == r.id %}selected{% endif %}>
+                        {{ r.nom }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </td>
+                <td style="width: 130px;">
+                  <form method="post"
+                        action="{{ url_for('session_ministere_membre_supprimer',
+                                           session_id=session.id,
+                                           session_ministere_id=sm.id,
+                                           smm_id=a.id) }}"
+                        onsubmit="return confirm('Retirer {{ a.membre.nom }} de ce ministère ?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                      Supprimer
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center">Aucun membre affecté pour le moment.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-start gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">
+          Enregistrer les rôles
+        </button>
+      </div>
+
+    </div>
+  </form>
+
+  <!-- AFFECTER UN NOUVEAU MEMBRE -->
+  <h2 class="h5">Affecter un nouveau membre</h2>
+  <form method="post" class="row g-2 mb-4">
+    <input type="hidden" name="action" value="ajout">
+
+    <div class="col-md-5">
+      <label class="form-label">Membre</label>
+      <select name="membre_id" class="form-select" required>
+        <option value="">-- Choisir un membre --</option>
+        {% for m in membres %}
+          <option value="{{ m.matricule }}">{{ m.matricule }} - {{ m.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Rôle</label>
+      <select name="role_id" class="form-select" required>
+        <option value="">(par défaut : "membre")</option>
+        {% for r in roles_disponibles %}
+          <option value="{{ r.id }}">{{ r.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+      <button type="submit" class="btn btn-success w-100">Affecter</button>
+    </div>
+  </form>
+
+  <a href="{{ url_for('session_ministeres', session_id=session.id) }}" class="btn btn-link">
+    ← Retour aux ministères de la session
+  </a>
+
+{% endblock %}
+

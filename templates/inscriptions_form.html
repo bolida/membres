@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}{% if inscription %}Modifier{% else %}Nouvelle{% endif %}
+    inscription - Session {{ session.id }}{% endblock %}
+
+{% block content %}
+
+  <h1 class="mb-3">
+    {% if inscription %}Modifier{% else %}Nouvelle{% endif %}
+    inscription pour la session {{ session.id }}
+  </h1>
+
+  <p class="text-muted">Session du {{ session.date_debut }} au {{ session.date_fin }}</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mt-2">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'warning' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+
+        <div class="mb-3">
+          <label class="form-label">Membre *</label>
+          <select name="membre_id" id="membreSelect" class="form-select" required>
+            <option value="">-- Choisir un membre --</option>
+            {% for m in membres %}
+              <option value="{{ m.matricule }}"
+                {% if inscription and inscription.membre_id == m.matricule %}selected{% endif %}>
+                {{ m.matricule }} - {{ m.nom }}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="form-text">
+            Vous pouvez taper dans la zone pour rechercher par nom ou matricule.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Adresse *</label>
+          <input type="text" name="adresse" class="form-control"
+                 value="{{ inscription.adresse if inscription else '' }}" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Faritra *</label>
+          <select name="faritra_id" class="form-select" required>
+            <option value="">-- Sélectionner un faritra --</option>
+            {% for f in faritras %}
+              <option value="{{ f.id }}"
+                {% if inscription and inscription.faritra_id == f.id %}selected{% endif %}>
+                {{ f.nom }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Téléphone *</label>
+          <input type="text" name="telephone" class="form-control"
+                 value="{{ inscription.telephone if inscription else '' }}" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Responsable (FDL / même session)</label>
+          <select name="responsable_id" id="responsableSelect" class="form-select">
+            <option value="">-- Aucun responsable --</option>
+            {% for r in responsables %}
+              <option value="{{ r.matricule }}"
+                {% if inscription and inscription.responsable_id == r.matricule %}selected{% endif %}>
+                {{ r.matricule }} - {{ r.nom }}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="form-text">
+            Sont listés uniquement les membres appartenant au ministère "FDL" dans cette session.
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ url_for('inscriptions_liste', session_id=session.id) }}"
+           class="btn btn-secondary">Annuler</a>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $(function() {
+    $('#membreSelect, #responsableSelect').select2({
+      width: '100%',
+      placeholder: '-- Choisir un membre --',
+      allowClear: true
+    });
+  });
+</script>
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Optionnel : un peu de style pour que Select2 colle à Bootstrap -->
+<style>
+.select2-container .select2-selection--single {
+height: 38px;
+padding: 4px 8px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+line-height: 28px;
+}
+</style>
+{% endblock %}

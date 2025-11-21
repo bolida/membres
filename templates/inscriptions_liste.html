@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des membres{% endblock %}
+
+{% block content %}
+
+  <h1 class="mb-3">Inscriptions - Session {{ session.id }}</h1>
+  <p class="text-muted">
+    Du {{ session.date_debut }} au {{ session.date_fin }}
+  </p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mt-2">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'warning' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Compteur -->
+  <div class="alert alert-secondary">
+    <strong>{{ nb_inscrits }}</strong> membre(s) déjà inscrit(s)
+    {% if nb_possibles > 0 %}
+      / <strong>{{ nb_possibles }}</strong> possible(s)
+      (reste <strong>{{ nb_restants }}</strong> à inscrire).
+    {% else %}
+      / aucun membre éligible (tous les membres sont marqués comme morts).
+    {% endif %}
+  </div>
+
+  <!-- Message session vide -->
+  {% if inscriptions|length == 0 %}
+    <div class="alert alert-info">
+      Aucune inscription pour cette session pour le moment.
+    </div>
+  {% endif %}
+
+  <!-- Bouton Nouvelle inscription ou message "plus de membres" -->
+  {% if nb_restants > 0 %}
+    <a href="{{ url_for('inscription_nouvelle', session_id=session.id) }}"
+       class="btn btn-primary mb-3">
+      ➕ Nouvelle inscription
+    </a>
+  {% else %}
+    <div class="alert alert-info mb-3">
+      Tous les membres éligibles ont déjà été inscrits à cette session.
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-header">
+      Liste des inscriptions
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Membre</th>
+            <th>Adresse</th>
+            <th>Faritra</th>
+            <th>Téléphone</th>
+            <th>Responsable</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for insc in inscriptions %}
+            <tr>
+              <td>{{ insc.id }}</td>
+              <td>{{ insc.membre.matricule }} - {{ insc.membre.nom }}</td>
+              <td>{{ insc.adresse or '' }}</td>
+              <td>{{ insc.faritra.nom if insc.faritra else '' }}</td>
+              <td>{{ insc.telephone or '' }}</td>
+              <td>
+                {% if insc.responsable %}
+                  {{ insc.responsable.matricule }} - {{ insc.responsable.nom }}
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ url_for('inscription_modifier',
+                                     session_id=session.id,
+                                     inscription_id=insc.id) }}"
+                   class="btn btn-sm btn-warning">
+                  Modifier
+                </a>
+                <form action="{{ url_for('inscription_supprimer',
+                                         session_id=session.id,
+                                         inscription_id=insc.id) }}"
+                      method="post" class="d-inline"
+                      onsubmit="return confirm('Supprimer cette inscription ?');">
+                  <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center">Aucune inscription pour cette session.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      {% if pagination and pagination.pages > 1 %}
+	<nav aria-label="Pagination" class="mt-3">
+	  <ul class="pagination">
+
+	    {% if pagination.has_prev %}
+	      <li class="page-item">
+		<a class="page-link" href="{{ url_for_other_page(pagination.prev_num) }}">«</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled"><span class="page-link">«</span></li>
+	    {% endif %}
+
+	    {% for p in range(1, pagination.pages + 1) %}
+	      <li class="page-item {% if p == pagination.page %}active{% endif %}">
+		<a class="page-link" href="{{ url_for_other_page(p) }}">{{ p }}</a>
+	      </li>
+	    {% endfor %}
+
+	    {% if pagination.has_next %}
+	      <li class="page-item">
+		<a class="page-link" href="{{ url_for_other_page(pagination.next_num) }}">»</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled"><span class="page-link">»</span></li>
+	    {% endif %}
+
+	  </ul>
+	</nav>
+	{% endif %}
+
+    </div>
+  </div>
+
+  <a href="{{ url_for('sessions_liste') }}" class="btn btn-link mt-3">Retour aux sessions</a>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
